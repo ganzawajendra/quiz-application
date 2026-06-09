@@ -4,13 +4,14 @@
 :root {
   --text-muted: #6B7280;
   --text-primary: #1C1B1B;
-  --bg-primary: #F7F8F9;
+  --bg-primary: #FCF8F8;
   --bg-secondary: #F7F8F9;
   --bg-footer: #F1EDEC;
   --border: #C4C7C8;
   --accent-gold: #D4AF37;
   --accent-red: #BA1A1A;
   --accent-green: #006A4E;
+  --accent-dark: #1A2B3C;
   --bg-icon-light: #E5E2E1;
   --bg-icon-dark: #314150;
   --shadow:

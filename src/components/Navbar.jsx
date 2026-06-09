@@ -5,7 +5,7 @@ const Navbar = ({ variant }) => {
   // Tampilan sebelum login (Navbar) 
   if (variant === 'public') {
     return (
-      <nav className='h-[64px] fixed flex items-center px-40 w-full z-50 border-b border-[var(--border)]'>
+      <nav className='h-[64px] fixed flex items-center px-40 w-full z-50 border-b border-[var(--border)] bg-[var(--bg-secondary)]'>
         <h1 className='text-xl font-semibold'>Quiz Application</h1>
       </nav>
     );

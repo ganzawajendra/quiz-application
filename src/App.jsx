@@ -1,7 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Home from "./pages/HomePage";
-import Login from "./pages/auth/LoginPage";
-import Register from "./pages/auth/RegisterPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 import Navbar from "./components/Navbar";
 
 // User harus login terlebih dahulu
@@ -13,18 +13,38 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Layout untuk halaman publik (sebelum login)
+const PublicLayout = () => {
+  return (
+    <>
+      <Navbar variant="public" />
+      <Outlet />
+    </>
+  );
+};
+
+// Layout untuk halaman privat (setelah login)
+const PrivateLayout = () => {
+  return (
+    <>
+      <Navbar variant="private" />
+      <Outlet />
+    </>
+  );
+};
+
 function App() {
   return (
     <Router>
       <Routes>
         {/* Route public untuk sebelum login */}
-        <Route path="/" element={<Navbar variant="public" />}>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
 
         {/* Route private untuk setelah login */}
-        <Route path="/" element={<Navbar variant="private" />}>
+        <Route element={<PrivateLayout />}>
           <Route 
             path="/" 
             element={
