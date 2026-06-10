@@ -1,8 +1,38 @@
-import React from 'react'
+// import React from 'react'
 import { Link } from 'react-router-dom'
 import AvailableQuiz from '../components/AvailableQuiz'
+import { useEffect, useState } from 'react'
+import { supabase } from '../config/supabaseClient'
 
 const HomePage = () => {
+  const [user, setUser] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isError, setIsError] = useState(null)
+
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        setIsLoading(true) 
+        
+        const {data, error} = await supabase
+        .from('users')
+        .select('xp')
+        
+        if (error) throw error
+        setUser(data)
+      } catch (error) {
+        setIsError(error.message)
+      }finally{
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  if (isLoading) return <p>Loading data...</p>
+  if (isError) return <p>Error: {isError}</p>
+
   return (
     <div className='pt-[140px] h-screen w-full px-40'>
       <h1 className='text-6xl text-[var(--text-primary)] leading-tight'>Welcom Back, Scholar!</h1>
@@ -55,7 +85,7 @@ const HomePage = () => {
         <div id="right-content" className='w-2/5'>
           <h3 className='text-3xl'>Your Performance</h3>
           <div className='bg-[var(--bg-secondary)] border border-[var(--border)] rounded-md mt-5 p-5 flex flex-col items-center'>
-            <h4 className='text-4xl font-semibold text-[var(--text-primary)]'>2.540</h4>
+            <h4 className='text-4xl font-semibold text-[var(--text-primary)]'>{user[0].xp}</h4>
             <div className='bg-[var(--accent-gold)] rounded-full px-5'>
               <p className='font-semibold text-[var(--bg-secondary)]'>Total Score (XP)</p>
             </div>

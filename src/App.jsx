@@ -19,43 +19,29 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      {/* Navbar dipindah ke luar Routes */}
       <Navbar />
-      
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
-
-          <Route 
-            path="/" 
-            element={
+          <Route path="/" element={
               <ProtectedRoute>
                 <Home />
               </ProtectedRoute>
             } 
           />
-
-          <Route
-            path="/test-quiz"
-            element={
+          <Route path="/test-quiz" element={
               <ProtectedRoute>
                 <TestQuizPage />
               </ProtectedRoute>
             }
           />
-
-          <Route
-            path="/test-quiz-complete"
-            element={
+          <Route path="/test-quiz-complete" element={
               <ProtectedRoute>
                 <TestQuizCompletePage />
               </ProtectedRoute>
             }
           />
-
-          <Route
-            path="/profile"
-            element={
+          <Route path="/profile" element={
               <ProtectedRoute>
                 <ProfilePage />
               </ProtectedRoute>

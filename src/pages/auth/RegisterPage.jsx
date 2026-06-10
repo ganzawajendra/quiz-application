@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import AuthLayout from '../../layouts/AuthLayout'
 import FormInput from '../../components/FormInput'
 import { supabase } from '../../config/supabaseClient'
