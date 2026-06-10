@@ -13,10 +13,8 @@ const RegisterPage = () => {
   })
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const {name, value} = e.target
+    setFormData(prevData => ({...prevData, [name]: value}))
   }
 
   const handleRegister = async (e) => {
