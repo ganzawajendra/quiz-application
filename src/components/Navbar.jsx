@@ -11,6 +11,7 @@ const Navbar = () => {
   }, [location.pathname])
 
   const isAuthenticated = localStorage.getItem('isAuthenticated')
+  const isQuizPage = location.pathname === '/test-quiz' || location.pathname === '/test-quiz-complete'
 
   const getLinkClass = (path) => {
     const baseClass = "transition-all duration-300 ease-in-out hover:scale-99 hover:text-[var(--text-primary)]"
@@ -20,8 +21,8 @@ const Navbar = () => {
     return `${baseClass} ${colorClass}`
   }
 
-  if (!isAuthenticated) {
-    // Tampilan navbar sebelum login
+  if (!isAuthenticated || isQuizPage) {
+    // Tampilan navbar sebelum login atau saat mengerjakan quiz
     return (
       <nav className='h-[64px] fixed flex items-center px-40 w-full z-50 border-b border-[var(--border)] bg-[var(--bg-secondary)]'>
         <h1 className='text-xl font-semibold'>Quiz Application</h1>
@@ -41,11 +42,6 @@ const Navbar = () => {
               <li>
                 <Link to="/quizzes" onClick={() => setActivePath('/quizzes')} className={getLinkClass('/quizzes')}>
                   Quizzes
-                </Link>
-              </li>
-              <li>
-                <Link to="/stats" onClick={() => setActivePath('/stats')} className={getLinkClass('/stats')}>
-                  Stats
                 </Link>
               </li>
           </ul>

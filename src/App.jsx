@@ -5,6 +5,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import Navbar from "./components/Navbar";
 import TestQuizPage from "./pages/TestQuizPage";
 import TestQuizCompletePage from "./pages/TestQuizCompletePage";
+import ProfilePage from "./pages/ProfilePage";
 
 // User harus login terlebih dahulu
 const ProtectedRoute = ({ children }) => {
@@ -48,6 +49,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <TestQuizCompletePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

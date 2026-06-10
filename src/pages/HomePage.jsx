@@ -5,7 +5,7 @@ import AvailableQuiz from '../components/AvailableQuiz'
 const HomePage = () => {
   return (
     <div className='pt-[140px] h-screen w-full px-40'>
-      <h1 className='text-6xl font-semibold text-[var(--text-primary)] leading-tight'>Welcom Back, Scholar!</h1>
+      <h1 className='text-6xl text-[var(--text-primary)] leading-tight'>Welcom Back, Scholar!</h1>
       <p className='text-[var(--text-muted)] text-lg w-1/2'>Your intellectual journey continues. Challenge yourself with new quizzes and sharpen your mind.</p>
       
       {/* Start Quiz */}
