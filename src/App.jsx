@@ -13,38 +13,18 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Layout untuk halaman publik (sebelum login)
-const PublicLayout = () => {
-  return (
-    <>
-      <Navbar variant="public" />
-      <Outlet />
-    </>
-  );
-};
-
-// Layout untuk halaman privat (setelah login)
-const PrivateLayout = () => {
-  return (
-    <>
-      <Navbar variant="private" />
-      <Outlet />
-    </>
-  );
-};
-
 function App() {
   return (
     <Router>
+      {/* Navbar dipindah ke luar Routes */}
+      <Navbar />
+      
       <Routes>
         {/* Route public untuk sebelum login */}
-        <Route element={<PublicLayout />}>
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Route>
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         {/* Route private untuk setelah login */}
-        <Route element={<PrivateLayout />}>
           <Route 
             path="/" 
             element={
@@ -53,7 +33,6 @@ function App() {
               </ProtectedRoute>
             } 
           />
-        </Route>
       </Routes>
     </Router>
   );
