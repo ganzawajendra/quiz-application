@@ -40,7 +40,7 @@ const Navbar = () => {
               </li>
               <li>
                 <Link to="/quizzes" onClick={() => setActivePath('/quizzes')} className={getLinkClass('/quizzes')}>
-                  Quiz
+                  Quizzes
                 </Link>
               </li>
               <li>
