@@ -34,7 +34,7 @@ const QuizzesPage = () => {
         {/* Card Quiz */}
         {currentActiveCard.map((config) => {
             return(
-                <QuizCard key={config.id} type={config.type} category={config.categoryName} totalQuestion={config.totalQuestion} difficulty={config.difficulty} to='/'/>
+                <QuizCard key={config.id} type={config.type} category={config.categoryName} totalQuestion={config.totalQuestion} difficulty={config.difficulty} to={`/test-quiz?category=${config.categoryId}&difficulty=${config.difficulty}&type=${config.type}`}/>
             )
         })}
     </div>
