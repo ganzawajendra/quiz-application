@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import TestQuizPage from "./pages/TestQuizPage";
 import TestQuizCompletePage from "./pages/TestQuizCompletePage";
 import ProfilePage from "./pages/ProfilePage";
+import QuizzesPage from "./pages/QuizzesPage";
 
 // User harus login terlebih dahulu
 const ProtectedRoute = ({ children }) => {
@@ -26,6 +27,12 @@ function App() {
           <Route path="/" element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="/quizzes" element={
+              <ProtectedRoute>
+                <QuizzesPage />
               </ProtectedRoute>
             } 
           />

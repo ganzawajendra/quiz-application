@@ -1,6 +1,6 @@
 // import React from 'react'
 import { Link } from 'react-router-dom'
-import AvailableQuiz from '../components/AvailableQuiz'
+import {AvailableQuiz} from '../components/QuizCard'
 import { useEffect, useState } from 'react'
 import { supabase } from '../config/supabaseClient'
 import { getXpUser } from '../services/userService'
