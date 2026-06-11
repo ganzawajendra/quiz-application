@@ -3,32 +3,38 @@ import { Link } from 'react-router-dom'
 import AvailableQuiz from '../components/AvailableQuiz'
 import { useEffect, useState } from 'react'
 import { supabase } from '../config/supabaseClient'
+import { getXpUser } from '../services/userService'
 
 const HomePage = () => {
-  const [user, setUser] = useState(null)
+  const [xpUser, setXpUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isError, setIsError] = useState(null)
 
   useEffect(() => {
-    async function fetchData(){
+    setIsLoading(true)
+    const loadXpUser = async () => {
       try {
-        setIsLoading(true) 
-        
-        const {data, error} = await supabase
-        .from('users')
-        .select('xp')
-        
-        if (error) throw error
-        setUser(data)
+        const {data: {session}} = await supabase.auth.getSession()
+        // console.log(session.user.id)
+        if(session){
+          const userData = await getXpUser(session.user.id)
+          if(userData){
+            setXpUser(userData.xp)
+            // console.log(userData)
+          }
+        }
       } catch (error) {
-        setIsError(error.message)
+        console.log("Gagal memuat XP: " + error.message)
+        setIsError(error)
       }finally{
         setIsLoading(false)
       }
     }
 
-    fetchData()
+    loadXpUser()
   }, [])
+
+  console.log(xpUser)
 
   if (isLoading) return <p>Loading data...</p>
   if (isError) return <p>Error: {isError}</p>
@@ -85,7 +91,7 @@ const HomePage = () => {
         <div id="right-content" className='w-2/5'>
           <h3 className='text-3xl'>Your Performance</h3>
           <div className='bg-[var(--bg-secondary)] border border-[var(--border)] rounded-md mt-5 p-5 flex flex-col items-center'>
-            <h4 className='text-4xl font-semibold text-[var(--text-primary)]'>{user[0].xp}</h4>
+            <h4 className='text-4xl font-semibold text-[var(--text-primary)]'>{xpUser}</h4>
             <div className='bg-[var(--accent-gold)] rounded-full px-5'>
               <p className='font-semibold text-[var(--bg-secondary)]'>Total Score (XP)</p>
             </div>
