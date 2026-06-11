@@ -35,7 +35,13 @@ const HomePage = () => {
   }, [])
 
   // console.log(xpUser)
-  if (isLoading) return <p>Loading data...</p>
+  if (isLoading) return (
+  <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
+    <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
+      Loading...
+    </p>
+  </div>
+)
   if (isError) return <p>Error: {isError}</p>
 
   return (
