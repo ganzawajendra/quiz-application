@@ -5,6 +5,7 @@ import he from 'he';
 
 const TestQuizPage = () => {
   const [selectedAnswer, setSelectedAnswer] = useState('')
+  const [listUserAnsweres, setListUserAnsweres] = useState([])
   const [listQuestions, setListQuestions] = useState([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [searchParams] = useSearchParams();
@@ -53,10 +54,18 @@ const TestQuizPage = () => {
   }, [categoryId, difficulty, type]);
 
   const handleNextButton = () => {
-    if (currentQuestionIndex < listQuestions.length) {
+    if(!selectedAnswer){
+      alert("Silakan pilih jawaban terlebih dahulu")
+      return
+    }
+    if (currentQuestionIndex < listQuestions.length - 1) {
+      setListUserAnsweres((prev) => [...prev, selectedAnswer])
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1)
+      setSelectedAnswer('')
     }else{
+      const finalAnswerList = [...listUserAnsweres, selectedAnswer]
       alert("Kuis Selesai!")
+      console.log(finalAnswerList)
     }
   }
 
