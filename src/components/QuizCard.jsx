@@ -17,6 +17,24 @@ export const AvailableQuiz = ({ quizTitle, quizQuestions, quizProgress, quizDiff
 }
 
 export const QuizCard = ({type, category, totalQuestion, difficulty, to = "/"}) => {
+  const difficultyBadge = {
+    easy: (
+      <div className='bg-green-200 px-4 py-1 rounded-full'>
+        <p className='text-[var(--accent-green)] text-xs uppercase tracking-wider font-semibold'>{difficulty}</p>
+      </div>
+    ),
+    medium: (
+      <div className='bg-yellow-200 px-4 py-1 rounded-full'>
+        <p className='text-yellow-700 text-xs uppercase tracking-wider font-semibold'>{difficulty}</p>
+      </div>
+    ),
+    hard: (
+      <div className='bg-red-200 px-4 py-1 rounded-full'>
+        <p className='text-[var(--accent-red)] text-xs uppercase tracking-wider font-semibold'>{difficulty}</p>
+      </div>
+    )
+  }
+
   return(
     <div className='border border-[var(--border)] p-5 rounded-md flex justify-between mt-5'>
       <div>
@@ -25,9 +43,13 @@ export const QuizCard = ({type, category, totalQuestion, difficulty, to = "/"}) 
         <p className='text-[var(--text-muted)]'>{totalQuestion} Question</p>
       </div>
       <div className='flex flex-col items-end justify-between'>
-        <div className='bg-green-200 px-4 py-1 rounded-full'>
-          <p className='text-[var(--accent-green)] text-xs uppercase tracking-wider font-semibold'>{difficulty}</p>
-        </div>
+        {
+          difficultyBadge[difficulty] || (
+            <div className='bg-gray-200 px-4 py-1 rounded-full'>
+            <p className='text-gray-700 text-xs uppercase tracking-wider font-semibold'>{difficulty}</p>
+          </div>
+          )
+        }
         <Link to={to} className='block text-center bg-[var(--accent-dark)] text-white py-2 px-10 rounded-md hover:bg-[var(--text-primary)] transition-all duration-300 ease-in-out hover:scale-99'>Start Quiz</Link>
       </div>
     </div>

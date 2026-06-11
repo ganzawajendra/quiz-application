@@ -34,8 +34,7 @@ const HomePage = () => {
     loadXpUser()
   }, [])
 
-  console.log(xpUser)
-
+  // console.log(xpUser)
   if (isLoading) return <p>Loading data...</p>
   if (isError) return <p>Error: {isError}</p>
 
