@@ -65,6 +65,7 @@ const TestQuizPage = () => {
     }else{
       const finalAnswerList = [...listUserAnsweres, selectedAnswer]
       alert("Kuis Selesai!")
+      handleQuizResults(finalAnswerList)
       console.log(finalAnswerList)
     }
   }
@@ -75,6 +76,29 @@ const TestQuizPage = () => {
     }else{
       alert("Mentok")
     }
+  }
+
+  const handleQuizResults = (finalAnswerList) => {
+    if(!finalAnswerList){
+      return
+    }
+    let totalCorrectAnswer = 0
+    let totalWrongAnswer = 0
+
+    listQuestions.forEach((questionItem, index) => {
+      const userAnswer = finalAnswerList[index]
+
+      if(userAnswer == questionItem.correct_answer){
+        totalCorrectAnswer += 1
+      }else{
+        totalWrongAnswer += 1
+      }
+    })
+
+    const finalScore = (totalCorrectAnswer / listQuestions.length) * 100
+    console.log(totalCorrectAnswer)
+    console.log(totalWrongAnswer)
+    console.log(finalScore)
   }
 
   const currentQuestion = listQuestions[currentQuestionIndex]
