@@ -1,23 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { getQuizQuestion } from '../services/quizService';
 import he from 'he';
 
 const TestQuizPage = () => {
+  // React hook
   const [selectedAnswer, setSelectedAnswer] = useState('')
   const [listUserAnsweres, setListUserAnsweres] = useState([])
   const [listQuestions, setListQuestions] = useState([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [searchParams] = useSearchParams();
-
   const [isLoading, setIsLoading] = useState(true)
 
+  // Mengambil query parameter
   const categoryId = searchParams.get("category")
   const difficulty = searchParams.get("difficulty")
   const type = searchParams.get("type")
 
+  // Security kalau query parameter kosong
+  if(!categoryId || !difficulty || !type){
+    // Kembalikan pada menu /quizzes
+    return <Navigate to="/quizzes" replace />;
+  }
+
+  // Fungsi untuk mengacak jawaban quiz
   const shuffleArray = (array) => {
+    // Mengambil array
     const shuffled = [...array];
+    // Untuk setiap i = panjang dari array, selama i lebih dari 0, i dikurang setiap iterasi
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -26,83 +36,138 @@ const TestQuizPage = () => {
   };
   
   useEffect(() => {
+    // seting loading (true)
     setIsLoading(true)
+    // Fungsi untuk menerima API Quiz
     const loadQuiz = async () => {
-      if(!categoryId || !difficulty || ! type) return
       try {
+        // Menaruh respon API ke variabel
         const response = await getQuizQuestion(categoryId, difficulty, type)
         if(response){
+          // Format pertanyaan dengan library "he" (decode)
           const formattingQuestion = response.map((q) => {
+            // Menggabungkan jawaban benar dan salah
             const combinedAnswer = [q.correct_answer, ...q.incorrect_answers]
             return{
               ...q,
               question: he.decode(q.question),
               correct_answer: he.decode(q.correct_answer),
-              all_answer: shuffleArray(combinedAnswer.map((ans) => he.decode(ans)))
+              all_answers: shuffleArray(combinedAnswer.map((ans) => he.decode(ans)))
             }
           })
+          // Memasukkan format pertanyaan ke state list pertanyaan
           setListQuestions(formattingQuestion)
         }
       } catch (error) {
+        // Tampilkan pesan error
         console.error("Gagal memuat data : ", error.message)
       }finally{
+        // Seting loading (false)
         setIsLoading(false)
       }
     }
 
+    // Jalankan fungsi menerima API Quiz
     loadQuiz()
   }, [categoryId, difficulty, type]);
 
+  // Fungsi untuk handle tombol next
   const handleNextButton = () => {
+    // Jika user belum memilih jawaban
     if(!selectedAnswer){
+      // Tampilkan pesan untuk segera mengisi jawaban
       alert("Silakan pilih jawaban terlebih dahulu")
       return
     }
+
+    // Mengambil list jawaban user
+    const updateAnswers = [...listUserAnsweres]
+    // Meng-update jawaban sesuai dengan index sekarang
+    updateAnswers[currentQuestionIndex] = selectedAnswer
+    // Memasukkan update jawaban baru ke list jawaban user
+    setListUserAnsweres(updateAnswers)
+
+    // Jika index sekarang kurang dari panjang pertanyaan
     if (currentQuestionIndex < listQuestions.length - 1) {
-      setListUserAnsweres((prev) => [...prev, selectedAnswer])
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1)
-      setSelectedAnswer('')
+      // Menyimpan index selanjutnya ke variabel
+      const nextIndex = currentQuestionIndex + 1
+      // Index selanjutnya dimasukkan ke state
+      setCurrentQuestionIndex(nextIndex)
+
+      // Memasukkan list jawaban baru ke state jawaban user
+      setSelectedAnswer(updateAnswers[nextIndex] || '')
+      // console.log(updateAnswers)
     }else{
+      // Simpan semua list jawaban user ke variabel
       const finalAnswerList = [...listUserAnsweres, selectedAnswer]
+      // Tampilkan pesan quiz telah selesai
       alert("Kuis Selesai!")
+      // Memasuukan list jawaban user ke fungsi untuk handle quiz
       handleQuizResults(finalAnswerList)
       console.log(finalAnswerList)
     }
   }
 
+  // Fungsi untuk handle tombol prev
   const handlePreviousButton = () => {
-    if (currentQuestionIndex < listQuestions.length) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex - 1)
+    // Jika index sekarang lebih besar dari 0
+    if (currentQuestionIndex > 0) {
+      // Mengambil list jawaban user
+      const updateAnswers = [...listUserAnsweres]
+      // Menyimpan index sebelumnya ke variabel
+      const prevIndex = currentQuestionIndex - 1
+
+      // Meng-update jawaban sesuai dengan index sekarang
+      updateAnswers[currentQuestionIndex] = selectedAnswer
+      // Memasukkan update jawaban baru ke list jawaban user
+      setListUserAnsweres(updateAnswers)
+
+      // Index sebelumnya dimasukkan ke state
+      setCurrentQuestionIndex(prevIndex)
+      // Memasukkan list jawaban baru ke state jawaban user
+      setSelectedAnswer(updateAnswers[prevIndex])
     }else{
-      alert("Mentok")
+      // Tampilkan pesan jika tidak dapat mundur lagi
+      alert("Tidak bisa mundur lagi")
     }
   }
 
+  // Fungsi untuk handle hasil dari quiz
   const handleQuizResults = (finalAnswerList) => {
+    // Jika tidak ada parameter yang dimasukkan
     if(!finalAnswerList){
+      // Kembalikan
       return
     }
+    
+    // Inisialisasi total jawaban benar dan salah
     let totalCorrectAnswer = 0
     let totalWrongAnswer = 0
 
+    // Lakukan perulangan (foreach) dari list quiz
     listQuestions.forEach((questionItem, index) => {
+      // Menyimpan jawaban user sesuai dengan index
       const userAnswer = finalAnswerList[index]
 
+      // Jika jawaban user sesuai dengan variabel "correct_answer" di API
       if(userAnswer == questionItem.correct_answer){
+        // total jawaban benar ditambah dengan 1
         totalCorrectAnswer += 1
       }else{
+        // total jawaban salah ditambah dengan 1
         totalWrongAnswer += 1
       }
     })
 
+    // Menghitung total final score (skala 10-100) lalu dimasukkan ke variabel
     const finalScore = (totalCorrectAnswer / listQuestions.length) * 100
     console.log(totalCorrectAnswer)
     console.log(totalWrongAnswer)
     console.log(finalScore)
   }
 
+  // Menampilkan pertanyaan sekarang (sesuai index) lalu dimasukkan ke variabel
   const currentQuestion = listQuestions[currentQuestionIndex]
-  // console.log(listQuestions[0]?.all_answer)
 
   if (isLoading) return (
     <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
@@ -138,7 +203,7 @@ const TestQuizPage = () => {
 
             {/* Answer */}
             <div className='mt-[70px] flex flex-col gap-4'>
-              {currentQuestion?.all_answer.map((answer, index) => {
+              {(currentQuestion?.all_answers || []).map((answer, index) => {
                 const alphabet = String.fromCharCode(65 + index)
                 const isActive = selectedAnswer === answer
 
