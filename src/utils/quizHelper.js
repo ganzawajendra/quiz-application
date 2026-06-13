@@ -27,4 +27,9 @@ export const shuffleArray = (array) => {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
-  };
+};
+
+// Fungsi untuk mengambil waktu total pengerjaan kuis
+export const finalTime = (totalTimer, currentTimer) => {
+    return formatTimer(totalTimer - currentTimer)
+}

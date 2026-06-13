@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { getQuizQuestion } from '../services/quizService';
 import he from 'he';
-import { formatTimer, shuffleArray } from '../utils/quizHelper';
+import { finalTime, formatTimer, shuffleArray } from '../utils/quizHelper';
 
 const TestQuizPage = () => {
+  // Inisialisasi waktu pengerjaan
+  const INITIAL_TIME = 300
   // React hook
   const timerRef = useRef(null)
   const [selectedAnswer, setSelectedAnswer] = useState('')
@@ -13,7 +15,9 @@ const TestQuizPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true)
-  const [timer, setTimer] = useState(10)
+  const [timer, setTimer] = useState(INITIAL_TIME)
+  const [isQuizFinished,setIsQuizFinished] = useState(false)
+
 
   // Mengambil query parameter
   const categoryId = searchParams.get("category")
@@ -63,6 +67,8 @@ const TestQuizPage = () => {
   }, [categoryId, difficulty, type]);
 
   useEffect(() => {
+    // Jika timer kurang dari sama dengan 0 atau kuis telah dikerjakan
+    if(timer <= 0 || isQuizFinished ) return
     // Membersihkan interval lama
     if(timerRef.current) clearInterval(timerRef.current)
 
@@ -82,7 +88,7 @@ const TestQuizPage = () => {
             // Tampilkan pesan waktu habis
             alert("Waktu habis!")
             // Kirim data ke handleQuizResult
-            handleQuizResults(listUserAnsweres)
+            handleQuizResults(listUserAnsweres, 0)
           }, 10);
           // Kunci state ke nilai 0
           return 0
@@ -123,14 +129,20 @@ const TestQuizPage = () => {
       setSelectedAnswer(updateAnswers[nextIndex] || '')
       // console.log(updateAnswers)
     }else{
-      // Simpan semua list jawaban user ke variabel
-      const finalAnswerList = [...listUserAnsweres, selectedAnswer]
+      setIsQuizFinished(true)
+      // Jika waktu masih ada
+      if(timerRef.current){
+        // Bersihkan interval
+        clearInterval(timerRef.current)
+        // Set interval menjadi null
+        timerRef.current = null
+      }
       // Tampilkan pesan quiz telah selesai
       alert("Kuis Selesai!")
       // Memasuukan list jawaban user ke fungsi untuk handle quiz
-      handleQuizResults(finalAnswerList)
-      console.log(finalAnswerList)
-    }
+      handleQuizResults(updateAnswers, timer)
+      console.log(updateAnswers)
+      }
   }
 
   // Fungsi untuk handle tombol prev
@@ -158,9 +170,12 @@ const TestQuizPage = () => {
   }
 
   // Fungsi untuk handle hasil dari quiz
-  const handleQuizResults = (finalAnswerList) => {
+  const handleQuizResults = (finalAnswerList, quizReminingTime) => {
     // Pindahkan parameter ke variabel supaya mudah dimanipulasi
     const finalAnswer = finalAnswerList || []
+
+    // Mencatat waktu sisa pengerjaan quiz
+    const quizRemining = quizReminingTime !== undefined ? quizReminingTime : timer
 
     // Inisialisasi total jawaban benar dan salah
     let totalCorrectAnswer = 0
@@ -193,7 +208,10 @@ const TestQuizPage = () => {
     console.log("Jawaban Salah: ", totalWrongAnswer)
     console.log("Tidak dijawab: ", totalNotAnswer)
     console.log("Hasil akhir: ", finalScore)
+    console.log("Total waktu: ", finalTime(INITIAL_TIME, quizRemining))
   }
+
+  
 
   // Menampilkan pertanyaan sekarang (sesuai index) lalu dimasukkan ke variabel
   const currentQuestion = listQuestions[currentQuestionIndex]
