@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { getQuizQuestion } from '../services/quizService';
 import he from 'he';
 import { finalTime, formatTimer, shuffleArray } from '../utils/quizHelper';
@@ -17,6 +17,7 @@ const TestQuizPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [timer, setTimer] = useState(INITIAL_TIME)
   const [isQuizFinished,setIsQuizFinished] = useState(false)
+  const navigate = useNavigate()
 
 
   // Mengambil query parameter
@@ -141,7 +142,6 @@ const TestQuizPage = () => {
       alert("Kuis Selesai!")
       // Memasuukan list jawaban user ke fungsi untuk handle quiz
       handleQuizResults(updateAnswers, timer)
-      console.log(updateAnswers)
       }
   }
 
@@ -181,6 +181,8 @@ const TestQuizPage = () => {
     let totalCorrectAnswer = 0
     let totalWrongAnswer = 0
     let totalNotAnswer = 0
+    // Inisalisasi list untuk menampung pertanyaan yang salah
+    const wrongQuestionList = []
 
     // Lakukan perulangan (foreach) dari list quiz
     listQuestions.forEach((questionItem, index) => {
@@ -199,16 +201,33 @@ const TestQuizPage = () => {
       }else{
         // Variabel totalWrongAnswer ditambah 1
         totalWrongAnswer += 1
+        // Tambahkan jawaban salah ke list untuk menampung pertanyaan yang salah
+        wrongQuestionList.push({
+          ...questionItem,
+          userAnswer,
+          indexQuestion : index + 1
+        })
       }
     })
 
     // Menghitung total final score (skala 10-100) lalu dimasukkan ke variabel
     const finalScore = listQuestions.length > 0 ? ((totalCorrectAnswer / listQuestions.length) * 100) : 0
-    console.log("Jawaban Benar: ", totalCorrectAnswer)
-    console.log("Jawaban Salah: ", totalWrongAnswer)
-    console.log("Tidak dijawab: ", totalNotAnswer)
-    console.log("Hasil akhir: ", finalScore)
-    console.log("Total waktu: ", finalTime(INITIAL_TIME, quizRemining))
+    // console.log("Jawaban Benar: ", totalCorrectAnswer)
+    // console.log("Jawaban Salah: ", totalWrongAnswer)
+    // console.log("Tidak dijawab: ", totalNotAnswer)
+    // console.log("Hasil akhir: ", finalScore)
+    // console.log("Total waktu: ", finalTime(INITIAL_TIME, quizRemining))
+    // console.log(wrongQuestionList)
+    navigate("/test-quiz-complete", {
+      state: {
+        totalCorrectAnswer,
+        totalWrongAnswer,
+        wrongQuestionList,
+        totalNotAnswer,
+        finalScore,
+        finalTime: finalTime(INITIAL_TIME, quizRemining) 
+      }
+    })
   }
 
   
