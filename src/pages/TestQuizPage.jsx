@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { getQuizQuestion } from '../services/quizService';
 import he from 'he';
+import { formatTimer, shuffleArray } from '../utils/quizHelper';
 
 const TestQuizPage = () => {
   // React hook
@@ -24,18 +25,6 @@ const TestQuizPage = () => {
     // Kembalikan pada menu /quizzes
     return <Navigate to="/quizzes" replace />;
   }
-
-  // Fungsi untuk mengacak jawaban quiz
-  const shuffleArray = (array) => {
-    // Mengambil array
-    const shuffled = [...array];
-    // Untuk setiap i = panjang dari array, selama i lebih dari 0, i dikurang setiap iterasi
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
   
   useEffect(() => {
     // seting loading (true)
@@ -204,18 +193,6 @@ const TestQuizPage = () => {
     console.log("Jawaban Salah: ", totalWrongAnswer)
     console.log("Tidak dijawab: ", totalNotAnswer)
     console.log("Hasil akhir: ", finalScore)
-  }
-
-  const formatTimer = (seconds) => {
-    const totalSeconds = seconds < 0 ? 0 : seconds
-
-    const mins = Math.floor(totalSeconds / 60)
-    const secs = totalSeconds % 60
-
-    const displayMins = String(mins).padStart(2, '0')
-    const displaySecs = String(secs).padStart(2, '0')
-
-    return `${displayMins}:${displaySecs}`
   }
 
   // Menampilkan pertanyaan sekarang (sesuai index) lalu dimasukkan ke variabel
