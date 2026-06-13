@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react'
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { getQuizQuestion } from '../services/quizService';
 import he from 'he';
 
 const TestQuizPage = () => {
   // React hook
+  const timerRef = useRef(null)
   const [selectedAnswer, setSelectedAnswer] = useState('')
   const [listUserAnsweres, setListUserAnsweres] = useState([])
   const [listQuestions, setListQuestions] = useState([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true)
+  const [timer, setTimer] = useState(10)
 
   // Mengambil query parameter
   const categoryId = searchParams.get("category")
@@ -70,6 +72,40 @@ const TestQuizPage = () => {
     // Jalankan fungsi menerima API Quiz
     loadQuiz()
   }, [categoryId, difficulty, type]);
+
+  useEffect(() => {
+    // Membersihkan interval lama
+    if(timerRef.current) clearInterval(timerRef.current)
+
+    // Membuat interval baru berjalan setiap 1 detik 
+    timerRef.current = setInterval(() => {
+      // Seting state timer
+      setTimer((prevTimer) => {
+        // Jika timer menyentuh kurang dari sama dengan 1
+        if (prevTimer <= 1) {
+          // Bersihkan interval
+          clearInterval(timerRef.current)
+          // Seting interval jadi null
+          timerRef.current = null
+
+          // setTimeout untuk menunggu proses dengan 10ms 
+          setTimeout(() => {
+            // Tampilkan pesan waktu habis
+            alert("Waktu habis!")
+            // Kirim data ke handleQuizResult
+            handleQuizResults(listUserAnsweres)
+          }, 10);
+          // Kunci state ke nilai 0
+          return 0
+        }
+        // Kurangi timer dengan 1
+        return prevTimer - 1
+      })
+    }, 1000)
+
+    // Bersihkan interval
+    return () => clearInterval(timerRef.current)
+  }, [listUserAnsweres, listQuestions])
 
   // Fungsi untuk handle tombol next
   const handleNextButton = () => {
@@ -134,40 +170,57 @@ const TestQuizPage = () => {
 
   // Fungsi untuk handle hasil dari quiz
   const handleQuizResults = (finalAnswerList) => {
-    // Jika tidak ada parameter yang dimasukkan
-    if(!finalAnswerList){
-      // Kembalikan
-      return
-    }
-    
+    // Pindahkan parameter ke variabel supaya mudah dimanipulasi
+    const finalAnswer = finalAnswerList || []
+
     // Inisialisasi total jawaban benar dan salah
     let totalCorrectAnswer = 0
     let totalWrongAnswer = 0
+    let totalNotAnswer = 0
 
     // Lakukan perulangan (foreach) dari list quiz
     listQuestions.forEach((questionItem, index) => {
       // Menyimpan jawaban user sesuai dengan index
-      const userAnswer = finalAnswerList[index]
+      const userAnswer = finalAnswer[index]
 
-      // Jika jawaban user sesuai dengan variabel "correct_answer" di API
-      if(userAnswer == questionItem.correct_answer){
-        // total jawaban benar ditambah dengan 1
+      // Jika tidak ada jawaban
+      if(userAnswer === null || userAnswer === undefined || userAnswer === ''){
+        // Variabel totalNotAnswer ditambah 1
+        totalNotAnswer += 1
+        // Dan jika jawaban sama dengan jawaban benar
+      }else if(userAnswer === questionItem.correct_answer){
+        // Variabel totalCorrectAnswer ditambah 1
         totalCorrectAnswer += 1
+        // Selain itu
       }else{
-        // total jawaban salah ditambah dengan 1
+        // Variabel totalWrongAnswer ditambah 1
         totalWrongAnswer += 1
       }
     })
 
     // Menghitung total final score (skala 10-100) lalu dimasukkan ke variabel
-    const finalScore = (totalCorrectAnswer / listQuestions.length) * 100
-    console.log(totalCorrectAnswer)
-    console.log(totalWrongAnswer)
-    console.log(finalScore)
+    const finalScore = listQuestions.length > 0 ? ((totalCorrectAnswer / listQuestions.length) * 100) : 0
+    console.log("Jawaban Benar: ", totalCorrectAnswer)
+    console.log("Jawaban Salah: ", totalWrongAnswer)
+    console.log("Tidak dijawab: ", totalNotAnswer)
+    console.log("Hasil akhir: ", finalScore)
+  }
+
+  const formatTimer = (seconds) => {
+    const totalSeconds = seconds < 0 ? 0 : seconds
+
+    const mins = Math.floor(totalSeconds / 60)
+    const secs = totalSeconds % 60
+
+    const displayMins = String(mins).padStart(2, '0')
+    const displaySecs = String(secs).padStart(2, '0')
+
+    return `${displayMins}:${displaySecs}`
   }
 
   // Menampilkan pertanyaan sekarang (sesuai index) lalu dimasukkan ke variabel
   const currentQuestion = listQuestions[currentQuestionIndex]
+  // console.log(timer)
 
   if (isLoading) return (
     <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
@@ -189,7 +242,7 @@ const TestQuizPage = () => {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-[var(--accent-dark)]">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            <span className="font-semibold text-lg text-[var(--accent-dark)]">00:00</span>
+            <span className="font-semibold text-lg text-[var(--accent-dark)]">{formatTimer(timer)}</span>
           </div>
         </div>
         <div className="w-full bg-[var(--bg-icon-light)] h-[6px] rounded-full overflow-hidden">
