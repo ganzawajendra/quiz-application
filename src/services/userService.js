@@ -11,3 +11,15 @@ export const getXpUser = async (userId) => {
         throw error
     }
 }
+
+export const getUser = async (userId) => {
+    if(!userId) return null
+    try {
+        const {data, error} = await supabase.from('users').select('*').eq('id', userId).single()
+        if (error) throw error
+        return data
+    } catch (error) {
+        console.log('Error dalam pengambilan data user: ' + error.message);
+        throw error
+    }
+}

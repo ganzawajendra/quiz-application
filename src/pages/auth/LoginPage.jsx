@@ -11,11 +11,6 @@ const LoginPage = () => {
     password: ''
   })
 
-  const handleChange = (e) => {
-    const {name, value} = e.target
-    setFormData(prevData => ({...prevData, [name]: value}))
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
@@ -32,6 +27,11 @@ const LoginPage = () => {
     } catch (error) {
       alert(error.message)
     }
+  }
+
+  const handleChange = (e) => {
+    const {name, value} = e.target
+    setFormData(prevData => ({...prevData, [name]: value}))
   }
 
   return (
