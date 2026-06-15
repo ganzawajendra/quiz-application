@@ -14,7 +14,7 @@ const QuizzesPage = () => {
 
   return (
     <div className='pt-[140px] px-100 pb-20'>
-        <h1 className='font-medium text-5xl leading-tight'>Master your craft.</h1>
+        <h1 className='text-5xl leading-tight'>Master your craft.</h1>
         <p className='text-[var(--text-muted)] w-2/3'>Explore curated challeges designed to deepen your understanding and certification readiness.</p>
 
         {/* Category */}

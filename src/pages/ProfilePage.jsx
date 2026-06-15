@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import FormInput from '../components/FormInput'
 import { getUser } from '../services/userService'
 import { supabase } from '../config/supabaseClient'
-import { handleChange } from '../utils/userHelper'
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null)

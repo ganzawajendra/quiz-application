@@ -5,12 +5,12 @@ export const AvailableQuiz = ({ quizTitle, quizQuestions, quizProgress, quizDiff
   return (
     <div className='bg-[var(--bg-secondary)] border border-[var(--border)] rounded-md mt-5 p-5 flex items-center gap-5 justify-between'>
         <div className='w-3/4'>
-            <h4 className='text-xl font-semibold'>{quizTitle}</h4>
-            <p className='text-[var(--text-muted)] tracking-wider'>{quizQuestions} | {quizDifficulty}</p>
+            <h4 className='text-lg font-semibold'>{quizTitle}</h4>
+            <p className='text-[var(--text-muted)] tracking-wider text-sm'>{quizQuestions} | {quizDifficulty}</p>
         </div>
         <div className='flex flex-col items-end w-1/4'>
             <p className='text-[var(--text-primary)] font-semibold'>{quizProgress}</p>
-            <p className='text-[var(--text-muted)] tracking-wider'>Progress</p>
+            <p className='text-[var(--text-muted)] tracking-wider text-sm'>Progress</p>
         </div>
     </div>
   )
@@ -39,10 +39,10 @@ export const QuizCard = ({type, category, totalQuestion, difficulty, to = "/"}) 
     <div className='border border-[var(--border)] p-5 rounded-md flex justify-between mt-5'>
       <div>
         <p className='font-semibold uppercase text-xs tracking-wider text-[var(--text-muted)]'>{type}</p>
-        <h2 className='text-2xl font-semibold'>{category}</h2>
-        <p className='text-[var(--text-muted)]'>{totalQuestion} Question</p>
+        <h2 className='text-xl font-semibold'>{category}</h2>
+        <p className='text-[var(--text-muted)] text-sm'>{totalQuestion} Question</p>
       </div>
-      <div className='flex flex-col items-end justify-between'>
+      <div className='flex flex-col gap-5 items-end justify-between'>
         {
           difficultyBadge[difficulty] || (
             <div className='bg-gray-200 px-4 py-1 rounded-full'>
@@ -50,7 +50,7 @@ export const QuizCard = ({type, category, totalQuestion, difficulty, to = "/"}) 
           </div>
           )
         }
-        <Link to={to} className='block text-center bg-[var(--accent-dark)] text-white py-2 px-10 rounded-md hover:bg-[var(--text-primary)] transition-all duration-300 ease-in-out hover:scale-99'>Start Quiz</Link>
+        <Link to={to} className='block text-center bg-[var(--accent-dark)] text-white py-2 px-6 text-sm rounded-md hover:bg-[var(--text-primary)] transition-all duration-300 ease-in-out hover:scale-99'>Start Quiz</Link>
       </div>
     </div>
   )
