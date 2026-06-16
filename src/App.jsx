@@ -7,6 +7,8 @@ import TestQuizPage from "./pages/TestQuizPage";
 import TestQuizCompletePage from "./pages/TestQuizCompletePage";
 import ProfilePage from "./pages/ProfilePage";
 import QuizzesPage from "./pages/QuizzesPage";
+import { GooeyToaster } from "goey-toast";
+import 'goey-toast/styles.css';
 
 // User harus login terlebih dahulu
 const ProtectedRoute = ({ children }) => {
@@ -21,6 +23,7 @@ function App() {
   return (
     <Router>
       <Navbar />
+      <GooeyToaster position="bottom-right" closeButton="top-right" />
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />

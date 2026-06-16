@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import FormInput from '../components/FormInput'
 import { getUser } from '../services/userService'
 import { supabase } from '../config/supabaseClient'
+import { gooeyToast } from 'goey-toast'
+import { useNavigate } from 'react-router-dom'
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null)
@@ -12,6 +14,7 @@ const ProfilePage = () => {
     email: '',
     password: ''
   })
+  const navigate = useNavigate()
 
   useEffect(() => {
     setIsLoading(true)
@@ -71,8 +74,17 @@ const ProfilePage = () => {
       if(dbError) {
         console.log("Error dalam update ke database: " + dbError.message)
       }
-
-      window.location.reload()
+      gooeyToast.success('Successfully Updated', {
+        fillColor: '#FCF8F8',
+        borderColor: '#E0E0E0',
+        borderWidth: 0.5,
+        preset: 'smooth',
+        showTimestamp: false,
+        timing: {
+          displayDuration: 3000,
+        },
+      })
+      navigate('/')
     } catch (error) {
       console.error("Gagal merubah data: " + error.message)
     }
@@ -87,6 +99,13 @@ const ProfilePage = () => {
     <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
       <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
         Loading...
+      </p>
+    </div>
+  )
+  if (isError) return (
+    <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
+      <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
+        Error: {isError}
       </p>
     </div>
   )

@@ -3,6 +3,7 @@ import FormInput from '../../components/FormInput'
 import AuthLayout from '../../layouts/AuthLayout'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../config/supabaseClient'
+import { gooeyToast } from 'goey-toast'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -19,13 +20,42 @@ const LoginPage = () => {
         password: formData.password
       })
       if (error) {
-        throw error
+        gooeyToast.error('Login failed', {
+          description: error.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
       }
-      alert('Login berhasil!')
+      gooeyToast.success('Login Successful', {
+        fillColor: '#FCF8F8',
+        borderColor: '#E0E0E0',
+        borderWidth: 0.5,
+        preset: 'smooth',
+        showTimestamp: false,
+        timing: {
+          displayDuration: 3000,
+        },
+      })
       localStorage.setItem('isAuthenticated', 'true')
       navigate('/')
     } catch (error) {
-      alert(error.message)
+      gooeyToast.error('Login failed', {
+        description: error.message,
+        fillColor: '#FCF8F8',
+        borderColor: '#E0E0E0',
+        borderWidth: 0.5,
+        preset: 'smooth',
+        showTimestamp: false,
+        timing: {
+          displayDuration: 3000,
+        },
+      })
     }
   }
 

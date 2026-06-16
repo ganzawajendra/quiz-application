@@ -17,6 +17,7 @@ const TestQuizPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true)
+  const [isError, setIsError] = useState(null)
   const [timer, setTimer] = useState(INITIAL_TIME)
   const [user, setUser] = useState(null)
   const [isQuizFinished,setIsQuizFinished] = useState(false)
@@ -283,6 +284,13 @@ const TestQuizPage = () => {
     <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
       <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
         Loading...
+      </p>
+    </div>
+  )
+  if (isError) return (
+    <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
+      <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
+        Error: {isError}
       </p>
     </div>
   )

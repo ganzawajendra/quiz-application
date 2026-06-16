@@ -42,7 +42,13 @@ const HomePage = () => {
       </p>
     </div>
   )
-  if (isError) return <p>Error: {isError}</p>
+  if (isError) return (
+    <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
+      <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
+        Error: {isError}
+      </p>
+    </div>
+  )
 
   return (
     <div className='pt-[140px] h-screen w-full px-40'>
