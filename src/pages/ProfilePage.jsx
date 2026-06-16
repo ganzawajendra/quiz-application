@@ -95,6 +95,17 @@ const ProfilePage = () => {
     setFormData(prevData => ({...prevData, [name]: value}))
   }
 
+  const handleLogout = (e) => {
+    e.preventDefault()
+    try {
+      localStorage.removeItem('isAuthenticated');
+    } catch (error) {
+      console.error("Gagal melakukan logout")
+    }finally{
+      navigate("/login")
+    }
+  }
+
   if (isLoading) return (
     <div className='w-full h-screen flex items-center justify-center bg-[var(--bg-primary)]'>
       <p className='text-[var(--text-primary)] tracking-wider animate-pulse'>
@@ -135,6 +146,11 @@ const ProfilePage = () => {
               <FormInput type={"password"} name={'password'} label={"New Password (Opsional)"} placeholder={"Leave blank to keep current password"} value={formData.password || ''} className={"col-span-1"} onChange={handleChange}/>
           </div>
         </form>
+      </div>
+
+      {/* Logout Button */}
+      <div className='w-full mt-[70px] flex justify-end'>
+        <button onClick={handleLogout} className='bg-[var(--accent-red)] text-white px-4 py-2 rounded-md text-sm tracking-wider cursor-pointer hover:bg-red-800 transition-all duration-200 hover:scale-99'>Logout</button>
       </div>
     </div>
   )
