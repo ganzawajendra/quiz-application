@@ -3,6 +3,8 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { getQuizQuestion } from '../services/quizService';
 import he from 'he';
 import { finalTime, formatTimer, shuffleArray } from '../utils/quizHelper';
+import { supabase } from '../config/supabaseClient';
+import { getUser } from '../services/userService';
 
 const TestQuizPage = () => {
   // Inisialisasi waktu pengerjaan
@@ -16,6 +18,7 @@ const TestQuizPage = () => {
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true)
   const [timer, setTimer] = useState(INITIAL_TIME)
+  const [user, setUser] = useState(null)
   const [isQuizFinished,setIsQuizFinished] = useState(false)
   const navigate = useNavigate()
 
@@ -103,6 +106,25 @@ const TestQuizPage = () => {
     return () => clearInterval(timerRef.current)
   }, [listUserAnsweres, listQuestions])
 
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const {data : {session}} = await supabase.auth.getSession()
+        if(session){
+          const response = await getUser(session.user.id)
+          if(response){
+            setUser(response)
+            // console.log(response)
+          }
+        }
+      } catch (error) {
+        console.error("Gagal memuat data user: " + error.message)
+      }
+    }
+
+    loadUser()
+  }, [])
+
   // Fungsi untuk handle tombol next
   const handleNextButton = () => {
     // Jika user belum memilih jawaban
@@ -170,7 +192,7 @@ const TestQuizPage = () => {
   }
 
   // Fungsi untuk handle hasil dari quiz
-  const handleQuizResults = (finalAnswerList, quizReminingTime) => {
+  const handleQuizResults = async (finalAnswerList, quizReminingTime) => {
     // Pindahkan parameter ke variabel supaya mudah dimanipulasi
     const finalAnswer = finalAnswerList || []
 
@@ -218,6 +240,29 @@ const TestQuizPage = () => {
     // console.log("Hasil akhir: ", finalScore)
     // console.log("Total waktu: ", finalTime(INITIAL_TIME, quizRemining))
     // console.log(wrongQuestionList)
+
+    // Masukkan total final score ke dalam XP database
+    try {
+      // Mengambil nilai XP dari user yang sedang login
+      const {data, error: fetchError} = await supabase.from('users').select('xp').eq('id', user.id).single()
+      if(fetchError) throw fetchError
+
+      // Menaruh nilai XP ke variabel
+      const currentXp = data?.xp || 0
+      // Menambahkan XP sekarang dengan total final score
+      const newXp = currentXp + parseInt(Math.round(finalScore))
+
+      // Melakukan update XP ke database
+      const {error: updateError} = await supabase.from('users').update({
+        xp : newXp
+      }).eq('id', user.id)
+      if (updateError) throw updateError
+      
+    } catch (error) {
+      console.error("Gagal melakukan update XP ke database: " + error.message)
+    }
+
+    // Lakukan navigasi ke /test-quiz-complete dengan mengirimkan segala parameter
     navigate("/test-quiz-complete", {
       state: {
         totalCorrectAnswer,
@@ -229,8 +274,6 @@ const TestQuizPage = () => {
       }
     })
   }
-
-  
 
   // Menampilkan pertanyaan sekarang (sesuai index) lalu dimasukkan ke variabel
   const currentQuestion = listQuestions[currentQuestionIndex]

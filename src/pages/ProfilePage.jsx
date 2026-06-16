@@ -59,7 +59,7 @@ const ProfilePage = () => {
         userUpdate.password = formData.password
       }
 
-      const {data, error: authError} = await supabase.auth.updateUser(userUpdate)
+      const {error: authError} = await supabase.auth.updateUser(userUpdate)
       if(authError) {
         console.error("Error dalam perubahan data: " + authError.message)
         return
