@@ -5,10 +5,11 @@ import he from 'he';
 import { finalTime, formatTimer, shuffleArray } from '../utils/quizHelper';
 import { supabase } from '../config/supabaseClient';
 import { getUser } from '../services/userService';
+import { gooeyToast } from 'goey-toast';
 
 const TestQuizPage = () => {
   // Inisialisasi waktu pengerjaan
-  const INITIAL_TIME = 300
+  const INITIAL_TIME = 10
   // React hook
   const timerRef = useRef(null)
   const [selectedAnswer, setSelectedAnswer] = useState('')
@@ -60,7 +61,17 @@ const TestQuizPage = () => {
         }
       } catch (error) {
         // Tampilkan pesan error
-        console.error("Gagal memuat data : ", error.message)
+        gooeyToast.error('Failed to Load Data', {
+          description: error.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
       }finally{
         // Seting loading (false)
         setIsLoading(false)
@@ -91,7 +102,16 @@ const TestQuizPage = () => {
           // setTimeout untuk menunggu proses dengan 10ms 
           setTimeout(() => {
             // Tampilkan pesan waktu habis
-            alert("Waktu habis!")
+            gooeyToast.error("Time's up!", {
+              fillColor: '#FCF8F8',
+              borderColor: '#E0E0E0',
+              borderWidth: 0.5,
+              preset: 'smooth',
+              showTimestamp: false,
+              timing: {
+                displayDuration: 3000,
+              },
+            })
             // Kirim data ke handleQuizResult
             handleQuizResults(listUserAnsweres, 0)
           }, 10);
@@ -119,7 +139,17 @@ const TestQuizPage = () => {
           }
         }
       } catch (error) {
-        console.error("Gagal memuat data user: " + error.message)
+        gooeyToast.error('Failed to Load Data', {
+          description: error.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
       }
     }
 
@@ -131,7 +161,16 @@ const TestQuizPage = () => {
     // Jika user belum memilih jawaban
     if(!selectedAnswer){
       // Tampilkan pesan untuk segera mengisi jawaban
-      alert("Silakan pilih jawaban terlebih dahulu")
+      gooeyToast.warning('Please select an answer', {
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
       return
     }
 
@@ -162,7 +201,16 @@ const TestQuizPage = () => {
         timerRef.current = null
       }
       // Tampilkan pesan quiz telah selesai
-      alert("Kuis Selesai!")
+      gooeyToast.success('The Quiz is Over', {
+        fillColor: '#FCF8F8',
+        borderColor: '#E0E0E0',
+        borderWidth: 0.5,
+        preset: 'smooth',
+        showTimestamp: false,
+        timing: {
+          displayDuration: 3000,
+        },
+      })
       // Memasuukan list jawaban user ke fungsi untuk handle quiz
       handleQuizResults(updateAnswers, timer)
       }
@@ -188,7 +236,16 @@ const TestQuizPage = () => {
       setSelectedAnswer(updateAnswers[prevIndex])
     }else{
       // Tampilkan pesan jika tidak dapat mundur lagi
-      alert("Tidak bisa mundur lagi")
+      gooeyToast.warning('This is the first question', {
+        fillColor: '#FCF8F8',
+        borderColor: '#E0E0E0',
+        borderWidth: 0.5,
+        preset: 'smooth',
+        showTimestamp: false,
+        timing: {
+          displayDuration: 3000,
+        },
+      })
     }
   }
 
@@ -260,18 +317,35 @@ const TestQuizPage = () => {
       if (updateError) throw updateError
       
     } catch (error) {
-      console.error("Gagal melakukan update XP ke database: " + error.message)
+      gooeyToast.error('Failed to update XP', {
+        description: error.message,
+        fillColor: '#FCF8F8',
+        borderColor: '#E0E0E0',
+        borderWidth: 0.5,
+        preset: 'smooth',
+        showTimestamp: false,
+        timing: {
+          displayDuration: 3000,
+        },
+      })
     }
 
     // Lakukan navigasi ke /test-quiz-complete dengan mengirimkan segala parameter
     navigate("/test-quiz-complete", {
       state: {
-        totalCorrectAnswer,
-        totalWrongAnswer,
-        wrongQuestionList,
-        totalNotAnswer,
-        finalScore,
-        finalTime: finalTime(INITIAL_TIME, quizRemining) 
+        statistics: {
+          totalCorrectAnswer,
+          totalWrongAnswer,
+          wrongQuestionList,
+          totalNotAnswer,
+          finalScore,
+          finalTime: finalTime(INITIAL_TIME, quizRemining) 
+        },
+        infoQuiz:{
+          categoryId,
+          difficulty,
+          type
+        }
       }
     })
   }

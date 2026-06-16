@@ -4,8 +4,8 @@ import { Link, useLocation } from 'react-router-dom'
 const TestQuizCompletePage = () => {
     const location = useLocation()
 
-    const quizData = location.state
-    console.log(quizData)
+    const quizData = location.state.statistics
+    const infoQuiz = location.state.infoQuiz
 
   return (
     <div className='pt-[140px] px-100 pb-20'>
@@ -43,7 +43,7 @@ const TestQuizCompletePage = () => {
             {/* Navigate */}
             <div className='flex flex-col gap-5'>
                 <Link to='/' className='bg-[var(--accent-dark)] w-full py-2 rounded-md cursor-pointer hover:bg-[var(--text-primary)] transition-all duration-200 hover:scale-99 text-[var(--bg-primary)] text-center'>Back to Home</Link>
-                <Link to='/test-quiz-page' className='bg-[var(--bg-primary)] w-full py-2 rounded-md border border-[var(--border)] cursor-pointer transition-all duration-200 hover:scale-99 text-center'>Retake Quiz</Link>
+                <Link to={`/test-quiz?category=${infoQuiz.categoryId}&difficulty=${infoQuiz.difficulty}&type=${infoQuiz.type}`} className='bg-[var(--bg-primary)] w-full py-2 rounded-md border border-[var(--border)] cursor-pointer transition-all duration-200 hover:scale-99 text-center'>Retake Quiz</Link>
             </div>
         </div>
         <div className='w-3/5 border border-[var(--border)] p-5 rounded-md'>

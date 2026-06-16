@@ -29,7 +29,17 @@ const ProfilePage = () => {
           }
         }
       } catch (error) {
-        console.error("Gagal memuat data user: " + error.message)
+        gooeyToast.error('Failed to load user data', {
+          description: error.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
         setIsError(error)
       }finally{
         setIsLoading(false)
@@ -64,7 +74,17 @@ const ProfilePage = () => {
 
       const {error: authError} = await supabase.auth.updateUser(userUpdate)
       if(authError) {
-        console.error("Error dalam perubahan data: " + authError.message)
+        gooeyToast.error('Failed to update the data', {
+          description: authError.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
         return
       }
 
@@ -72,7 +92,17 @@ const ProfilePage = () => {
         full_name: formData.full_name,
       }).eq('id', user.id)
       if(dbError) {
-        console.log("Error dalam update ke database: " + dbError.message)
+        gooeyToast.error('Failed to update the data to database', {
+          description: dbError.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
       }
       gooeyToast.success('Successfully Updated', {
         fillColor: '#FCF8F8',
@@ -86,7 +116,17 @@ const ProfilePage = () => {
       })
       navigate('/')
     } catch (error) {
-      console.error("Gagal merubah data: " + error.message)
+      gooeyToast.error('Failed to update the data', {
+          description: error.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
     }
   }
 
@@ -100,7 +140,17 @@ const ProfilePage = () => {
     try {
       localStorage.removeItem('isAuthenticated');
     } catch (error) {
-      console.error("Gagal melakukan logout")
+      gooeyToast.error('Failed to logout', {
+          description: error.message,
+          fillColor: '#FCF8F8',
+          borderColor: '#E0E0E0',
+          borderWidth: 0.5,
+          preset: 'smooth',
+          showTimestamp: false,
+          timing: {
+            displayDuration: 3000,
+          },
+        })
     }finally{
       navigate("/login")
     }
